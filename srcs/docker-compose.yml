@@ -1,0 +1,16 @@
+services:
+  nginx:
+    container_name: nginx
+    build: ./requeriments/nginx
+    restart: always
+    ports:
+      - "443:443"
+    secrets:
+      - nginx_crt
+      - nginx_key
+
+secrets:
+  nginx_crt:
+    file: ../$NGINX_CERT_FILE
+  nginx_key:
+    file: ../$NGINX_KEY_FILE
