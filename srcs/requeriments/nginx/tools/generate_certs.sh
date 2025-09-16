@@ -36,7 +36,7 @@ mkdir -p ../../../../secrets
 openssl req -x509 -nodes -days 365 -newkey rsa:4096 \
 	-keyout "$KEY_FILE" \
 	-out "$CERT_FILE" \
-	-subj "/C=ES/ST=Madrid/L=Madrid/O=Inception/CN=$DOMAIN_NAME"
+	-subj "/C=ES/ST=Madrid/L=Madrid/O=Inception/CN=${DOMAIN_NAME}"
 
 echo "Certificados generados correctamente:"
 echo "  Certificado: $CERT_FILE"

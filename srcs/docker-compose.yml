@@ -11,6 +11,6 @@ services:
 
 secrets:
   nginx_crt:
-    file: ../$NGINX_CERT_FILE
+    file: ../${NGINX_CERT_FILE}
   nginx_key:
-    file: ../$NGINX_KEY_FILE
+    file: ../${NGINX_KEY_FILE}
