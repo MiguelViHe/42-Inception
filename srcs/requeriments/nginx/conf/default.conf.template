@@ -1,0 +1,73 @@
+server {
+	listen 443 ssl; # IPv4
+	listen [::]:443 ssl; # IPv6
+	server_name ${DOMAIN_NAME};
+
+	ssl_certificate /run/secrets/nginx_crt;
+	ssl_certificate_key /run/secrets/nginx_key;
+
+	#Fuerzo el uso de los protocolos TLSv1.2 y TLSv1.3
+	protocols TLSv1.2 TLSv1.3;
+
+	#Prioridad de los cifrados del servidor sobre los del cliente
+	#El servidor (Nginx) fuerza que se use el primer cifrado de SU propia lista (la de ssl_ciphers), siempre que esté soportado por el cliente
+	#Se comparan las listas de cifrados del cliente y del servidor, y se elige el primer cifrado que aparezca en la lista del servidor.
+	# Si no se pone esta directiva, se usa el primer cifrado de la lista del cliente que también esté en la lista del servidor.
+	#Esto es importante porque el servidor puede tener una lista de cifrados más segura y actualizada que la del cliente.
+	ssl_prefer_server_ciphers on;
+
+	#Fuerzo el uso de cifrados fuertes:
+		#HIGH: Cifrados fuertes
+		#!aNULL: No permite cifrados sin autenticación. evitamos ataques del tipo man-in-the-middle
+		#!MD5: No permite cifrados que usen MD5, ya que es un algoritmo débil y vulnerable a colisiones
+	ssl_ciphers HIGH:!aNULL:!MD5;
+
+	#Activa la caché de sesiones TLS en memoria con 10MB (sólo para TLSv1.2)
+	ssl_session_cache shared:SSL:10m;
+	#Tiempo de validez de una sesión TLS en caché (sólo para TLSv1.2)
+	ssl_session_timeout 10m;
+
+	# Dónde encontrar los archivos web
+	root /var/www/html;
+	# Si no se especifica un archivo, usar index.html
+	index index.html;
+
+	# location /: Cualquier peticion a la raiz del sitio web...
+	#	try_files: prueba $uri (la URI solicitada), $uri/ (la URI con una barra al final, para directorios)
+	#	y si no existe, redirige a /index.php con los argumentos de la peticion
+	#	is_args: añade un '?' si hay argumentos en la petición
+	#	args: los argumentos de la petición
+	# Esto es útil para frameworks PHP que usan un único punto de entrada (index.php) como wordpress.
+	location / {
+		try_files $uri $uri/ /index.php$is_args$args;
+	}
+
+	# Para archivos estáticos (imágenes, CSS, JS, etc.) Acelera mucho la carga de estos archivos.
+	# ~* : hace que la expresión regular(~) no distinga entre mayúsculas y minúsculas (*)
+	# \. : el punto antes de la extensión del archivo
+	# (jpg|jpeg|png|gif|ico|css|js|svg|woff2?) : las extensiones de archivo que queremos cachear
+	# $ : fin de la cadena
+	# access_log off; : desactiva el registro de accesos para estos archivos (mejora el rendimiento)
+	# expires 30d; : indica que estos archivos pueden ser cacheados por 30 días
+	# add_header Cache-Control "public"; : añade una cabecera HTTP para indicar que estos archivos son cacheables
+	location ~* \.(jpg|jpeg|png|gif|ico|css|js|svg|woff2?)$ {
+		access_log off;
+		expires 30d;
+		add_header Cache-Control "public";
+	}
+
+	# Para comprobar que Nginx sigue funcionando.
+	# Responde con el código 200 y el texto "ok" a las peticiones a /healthz
+	location = /healthz {
+		return 200 "ok\n";
+		add_header Content-Type text/plain;
+	}
+
+	# Pasar las peticiones a archivos PHP al backend de PHP-FPM CUANDO ME PONGA CON WORDPRESS
+	# location ~ \.php$ {
+	# 	include fastcgi_params;
+	# 	fastcgi_pass php-fpm:9000;
+	# 	fastcgi_index index.php;
+	# 	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	# }
+}
