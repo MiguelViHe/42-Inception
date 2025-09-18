@@ -1,13 +1,22 @@
 services:
   nginx:
     container_name: nginx
+    image: nginx:1.0
     build: ./requeriments/nginx
+    env_file:
+      - .env
     restart: always
     ports:
       - "443:443"
+    networks:
+      - inception
     secrets:
       - nginx_crt
       - nginx_key
+
+networks:
+  inception:
+    driver: bridge
 
 secrets:
   nginx_crt:

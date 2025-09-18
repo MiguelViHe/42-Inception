@@ -7,7 +7,7 @@ server {
 	ssl_certificate_key /run/secrets/nginx_key;
 
 	#Fuerzo el uso de los protocolos TLSv1.2 y TLSv1.3
-	protocols TLSv1.2 TLSv1.3;
+	ssl_protocols TLSv1.2 TLSv1.3;
 
 	#Prioridad de los cifrados del servidor sobre los del cliente
 	#El servidor (Nginx) fuerza que se use el primer cifrado de SU propia lista (la de ssl_ciphers), siempre que esté soportado por el cliente
