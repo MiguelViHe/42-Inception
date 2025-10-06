@@ -14,6 +14,19 @@ services:
       - nginx_crt
       - nginx_key
 
+  mariadb:
+    container_name: mariadb
+    image: mariadb:1.0
+    build: ./requeriments/mariadb
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - inception
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    secrets:
+
 networks:
   inception:
     driver: bridge
@@ -23,3 +36,4 @@ secrets:
     file: ../${NGINX_CERT_FILE}
   nginx_key:
     file: ../${NGINX_KEY_FILE}
+  mariadb_root_password:

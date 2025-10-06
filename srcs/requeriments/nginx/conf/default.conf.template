@@ -6,6 +6,9 @@ server {
 	ssl_certificate /run/secrets/nginx_crt;
 	ssl_certificate_key /run/secrets/nginx_key;
 
+	access_log /dev/stdout;
+	error_log /dev/stderr;
+
 	#Fuerzo el uso de los protocolos TLSv1.2 y TLSv1.3
 	ssl_protocols TLSv1.2 TLSv1.3;
 
@@ -59,6 +62,7 @@ server {
 	# Para comprobar que Nginx sigue funcionando.
 	# Responde con el código 200 y el texto "ok" a las peticiones a /healthz
 	location = /healthz {
+		# access_log off; DECOMENTAR EN PRODUCCION PARA QUE NO APAREZCAN EN LOS LOGS
 		return 200 "ok\n";
 		add_header Content-Type text/plain;
 	}
