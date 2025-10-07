@@ -25,10 +25,10 @@ chown -R mysql:mysql /var/lib/mysql /run/mysqld
 # --user=mysql -> ejecuta el comando como el usuario mysql
 # --datadir=/var/lib/mysql -> especifica el directorio donde se almacenan los datos
 if [ ! -d "/var/lib/mysql/mysql" ]; then
-	echo "Base de datos no encontrada, inicializando..."
+	echo "[+] Base de datos no encontrada, inicializando..."
 	mysqld --initialize-insecure --user=mysql --datadir=/var/lib/mysql
 else
-	echo "Base de datos ya inicializada, saltando inicialización."
+	echo "[+] Base de datos ya inicializada, saltando inicialización."
 fi
 
 # arrancar MariaDB en segundo plano sin red (solo local)
@@ -36,6 +36,7 @@ fi
 # --skip-networking -> deshabilita las conexiones de red, solo permite conexiones locales
 # & -> ejecuta el comando en segundo plano para que el script continúe.
 # pid="$!" -> guarda el PID del proceso temporal, para poder detenerlo más tarde.
+echo "[+] Arrancando servidor temporal..."
 mysqld_safe --skip-networking &
 pid="$!"
 
@@ -45,3 +46,36 @@ until mysqladmin ping --silent; do
 	sleep 1
 done
 
+DB_NAME=${MYSQL_DATABASE}
+DB_USER=${MYSQL_USER}
+DB_ROOT=${MYSQL_ROOT_USER}
+
+DB_USER_PASS=$(cat "${MYSQL_PASSWORD_FILE}")
+DB_ROOT_PASS=$(cat "${MYSQL_ROOT_PASSWORD_FILE}")
+
+echo "[+] Creando base de datos y usuarios..."
+
+# Crear la base de datos y los usuarios con los privilegios adecuados
+# Uso comillas invertidas (`) para el nombre de la base de datos en caso de
+# que contenga caracteres especiales o sea una palabra reservada.
+# Uso comillas simples (') para los nombres de usuario y contraseñas.
+# GRANT ALL PRIVILEGES ON *.* TO 'user'@'%' WITH GRANT OPTION;
+# 	*.* -> todos los privilegios en todas las bases de datos y tablas
+# 	'%' -> permite conexiones desde cualquier host
+# 	WITH GRANT OPTION -> permite al usuario otorgar sus privilegios a otros usuarios
+# FLUSH PRIVILEGES; -> recarga los privilegios para que los cambios tengan efecto
+# <<-EOSQL ... EOSQL -> permite ejecutar múltiples comandos SQL en un solo bloque (HEREDOC).
+mysql -u root <<-EOSQL
+    CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;
+    CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_USER_PASS}';
+    CREATE USER IF NOT EXISTS '${DB_ROOT}'@'%' IDENTIFIED BY '${DB_ROOT_PASS}';
+    GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'%';
+    GRANT ALL PRIVILEGES ON *.* TO '${DB_ROOT}'@'%' WITH GRANT OPTION;
+    FLUSH PRIVILEGES;
+EOSQL
+
+echo "[+] Deteniendo servidor temporal..."
+mysqladmin -uroot -p"${DB_ROOT_PASS}" shutdown
+
+echo "[+] Arrancando MariaDB normalmente..."
+exec mysqld_safe

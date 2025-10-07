@@ -6,27 +6,31 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/18 16:32:57 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/09/18 17:10:20 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/07 17:54:01 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = inception
 
+USER_NAME = $(shell whoami)
+DATA_DIR = /home/$(USER_NAME)/data
+
 all: up
 
-# setup_dirs:
-# 	sudo mkdir -p /home/mvidal-h/data/wordpress
-# 	sudo chown -R 101:101 /home/mvidal-h/data/wordpress
-# 	sudo chmod 755 /home/mvidal-h/data/wordpress
-# 	sudo mkdir -p /home/mvidal-h/data/mariadb
-# 	sudo chown -R 101:101 /home/mvidal-h/data/mariadb
-# 	sudo chmod 750 /home/mvidal-h/data/mariadb
+setup:
+# 	sudo mkdir -p ${USER_NAME}/wordpress
+# 	sudo chown -R 101:101 ${USER_NAME}/wordpress
+# 	sudo chmod 755 ${USER_NAME}/wordpress
+
+	sudo mkdir -p ${DATA_DIR}/mariadb
+	sudo chown -R 101:101 ${DATA_DIR}/mariadb
+	sudo chmod 750 ${DATA_DIR}/mariadb
 
 # -f: especifica el archivo de configuración (no el por defecto)
 # up: crea y arranca los contenedores
 # -d: detached (en segundo plano). No deja la terminal pillada mostrando sus logs.
 # --build: fuerza la reconstrucción de las imágenes (aunque no haya cambios)
-up:	#setup_dirs
+up:	setup
 	docker compose -f srcs/docker-compose.yml up -d --build
 
 # down: para y elimina los contenedores, redes y opcionalmente, volúmenes creados por 'up'
@@ -53,32 +57,40 @@ clean:
 # docker container prune -f: elimina todos los contenedores detenidos
 # docker volume prune -f: elimina todos los volúmenes no usados por al menos un contenedor
 # sudo rm -rf /home/mvidal-h/data/: elimina los datos persistentes en el host
-# docker volume rm ...: elimina volúmenes específicos (si existen)
-# || true: evita que falle el make si los volúmenes no existen
 fclean:
+	@echo "🧹 Deteniendo y eliminando contenedores y volúmenes del proyecto..."
 	docker compose -f srcs/docker-compose.yml down --volumes --remove-orphans
+	@echo "🧹 Limpiando contenedores detenidos..."
 	docker container prune -f
+	@echo "🧹 Limpiando imágenes no usadas..."
 	docker image prune -af
-# 	docker volume prune -f
-# 	sudo rm -rf /home/mvidal-h/data/
-# 	docker volume rm srcs_mariadb_data srcs_wordpress_data || true
+	@echo "🧹 Limpiando volúmenes no usados..."
+	docker volume prune -f
+	@if [ -d "$(DATA_DIR)" ]; then \
+		echo "🗑 Borrando datos persistentes en $(DATA_DIR)..."; \
+		sudo rm -rf "$(DATA_DIR)"; \
+	else \
+		@echo "✅ No se encontraron datos persistentes en $(DATA_DIR)"; \
+	fi
+	@echo "✅ Limpieza completa."
 
-# volumes:
-# 	docker volume ls
-# 	docker volume inspect srcs_mariadb_data
-# 	docker volume inspect srcs_wordpress_data
+
+volumes:
+	@docker volume ls
+	@docker volume inspect srcs_mariadb_data
+	@docker volume inspect srcs_wordpress_data
 
 status:
 	@echo "🟦 Docker containers:"
 	@docker ps -a --filter name=nginx --filter name=wordpress --filter name=mariadb
 
 	@echo "\n🟩 Docker volumes:"
-	@docker volume ls | grep -E 'mariadb_data|wordpress_data' || echo "No volumes found"
+	@docker volume ls | grep -E 'srcs_mariadb_data|srcs_wordpress_data' || echo "No volumes found"
 
-# 	@echo "\n🟨 Docker volume paths:"
-# 	@echo "MariaDB:    /home/mvidal-h/data/mariadb"
-# 	@echo "WordPress:  /home/mvidal-h/data/wordpress"
-# 	@sudo ls -l /home/mvidal-h/data/
+	@echo "\n🟨 Docker volume paths:"
+	@echo "MariaDB:    $(DATA_DIR)/mariadb"
+	@echo "WordPress:  $(DATA_DIR)/wordpress"
+	@sudo ls -l $(DATA_DIR)
 
 	@echo "\n🟪 Docker network:"
-	@docker network ls | grep inception-network || echo "No network found"
+	@docker network ls | grep inception || echo "No network found"

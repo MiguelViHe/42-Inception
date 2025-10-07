@@ -3,11 +3,11 @@ services:
     container_name: nginx
     image: nginx:1.0
     build: ./requeriments/nginx
-    env_file:
-      - .env
+    environment:
+      DOMAIN_NAME: ${DOMAIN_NAME}
     restart: always
     ports:
-      - "443:443"
+      - "$NGINX_PORT:443"
     networks:
       - inception
     secrets:
@@ -18,18 +18,39 @@ services:
     container_name: mariadb
     image: mariadb:1.0
     build: ./requeriments/mariadb
-    env_file:
-      - .env
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_ROOT_USER: ${DB_ROOT}
+      MYSQL_PASSWORD_FILE: /run/secrets/mariadb_user_password
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mariadb_root_password
     restart: always
     networks:
       - inception
     volumes:
       - mariadb_data:/var/lib/mysql
     secrets:
+      - mariadb_root_password
+      - mariadb_user_password
 
 networks:
   inception:
     driver: bridge
+
+volumes:
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/${LOGIN_NAME}/data/mariadb #CAMBIAR en .env en la VM!!!
+      o: bind
+
+  # wordpress_data:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     device: /home/mvidal/data/wordpress
+  #     o: bind
 
 secrets:
   nginx_crt:
@@ -37,3 +58,6 @@ secrets:
   nginx_key:
     file: ../${NGINX_KEY_FILE}
   mariadb_root_password:
+    file: ../secrets/db_root_password.txt
+  mariadb_user_password:
+    file: ../secrets/db_password.txt
