@@ -47,11 +47,11 @@ until mysqladmin ping --silent; do
 done
 
 DB_NAME=${WP_DATABASE}
-DB_USER=${WP_USER}
-DB_ROOT=${WP_ROOT_USER}
+DB_USER=${WPDB_USER}
+DB_ROOT=${WPDB_ROOT_USER}
 
-DB_USER_PASS=$(cat "${WP_USER_PASSWORD_FILE}")
-DB_ROOT_PASS=$(cat "${WP_ROOT_PASSWORD_FILE}")
+DB_USER_PASS=$(cat "${WPDB_USER_PASSWORD_FILE}")
+DB_ROOT_PASS=$(cat "${WPDB_ROOT_PASSWORD_FILE}")
 MDB_ROOT_PASS=$(cat "${MDB_ROOT_PASSWORD_FILE}")
 
 echo "[+] Creando base de datos y usuarios..."

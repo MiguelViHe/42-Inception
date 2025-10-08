@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/12 15:12:29 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/09/18 16:28:51 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/08 17:48:41 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,7 @@
 FROM debian:bullseye
 
 # Install Nginx (todo en un solo RUN para reducir el número de capas)
+# apt-get clean -> limpia la cache de apt-get para reducir el tamaño de la imagen
 # rm -rf /var/lib/apt/lists/* -> elimina los indices descargados por apt-get update
 # -y -> responde "si" a todas las preguntas que haga apt-get
 # --no-install-recommends -> instala solo lo necesario, sin paquetes adicionales
@@ -23,6 +24,7 @@ FROM debian:bullseye
 # curl -> para el healthcheck
 RUN apt-get update && \
 	apt-get install -y --no-install-recommends nginx openssl gettext-base curl && \
+	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
 
 # Copiamos la plantilla de configuración donde estan las variables de entorno
@@ -45,6 +47,8 @@ COPY tools/nginx_entrypoint.sh /usr/local/bin/nginx_entrypoint.sh
 # 	/var/www/html -> directorio donde se sirven los archivos web
 RUN chmod -R 755 /var/www/html
 RUN chown -R www-data:www-data /var/www/html
+
+EXPOSE 443
 
 RUN chmod +x /usr/local/bin/nginx_entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/nginx_entrypoint.sh"]

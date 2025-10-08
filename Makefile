@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/18 16:32:57 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/08 12:35:46 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/08 18:23:39 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,13 +18,13 @@ DATA_DIR = /home/$(USER_NAME)/data
 all: up
 
 setup:
-# 	sudo mkdir -p ${USER_NAME}/wordpress
-# 	sudo chown -R 101:101 ${USER_NAME}/wordpress
-# 	sudo chmod 755 ${USER_NAME}/wordpress
-
 	sudo mkdir -p ${DATA_DIR}/mariadb
 	sudo chown -R 101:101 ${DATA_DIR}/mariadb
 	sudo chmod 750 ${DATA_DIR}/mariadb
+
+	sudo mkdir -p ${DATA_DIR}/wordpress
+	sudo chown -R 101:101 ${DATA_DIR}/wordpress
+	sudo chmod 750 ${DATA_DIR}/wordpress
 
 # -f: especifica el archivo de configuración (no el por defecto)
 # up: crea y arranca los contenedores

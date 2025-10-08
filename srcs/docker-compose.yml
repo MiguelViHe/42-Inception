@@ -10,6 +10,8 @@ services:
       - "$NGINX_PORT:443"
     networks:
       - inception
+    volumes:
+      - wordpress_data:/var/www/html
     secrets:
       - nginx_crt
       - nginx_key
@@ -20,10 +22,10 @@ services:
     build: ./requeriments/mariadb
     environment:
       WP_DATABASE: ${DB_DATABASE}
-      WP_USER: ${WP_USER}
-      WP_ROOT_USER: ${WP_ROOT_USER}
-      WP_USER_PASSWORD_FILE: /run/secrets/wp_user_password
-      WP_ROOT_PASSWORD_FILE: /run/secrets/wp_root_password
+      WPDB_USER: ${WPDB_USER}
+      WPDB_ROOT_USER: ${WPDB_ROOT_USER}
+      WPDB_USER_PASSWORD_FILE: /run/secrets/wpdb_user_password
+      WPDB_ROOT_PASSWORD_FILE: /run/secrets/wpdb_root_password
       MDB_ROOT_PASSWORD_FILE: /run/secrets/mdb_root_password
     restart: always
     networks:
@@ -31,9 +33,30 @@ services:
     volumes:
       - mariadb_data:/var/lib/mysql
     secrets:
-      - wp_root_password
-      - wp_user_password
+      - wpdb_root_password
+      - wpdb_user_password
       - mdb_root_password
+
+  wordpress:
+    container_name: wordpress
+    image: wordpress:1.0
+    build: ./requeriments/wordpress
+    environment:
+      WP_DATABASE: ${DB_DATABASE}
+      WP_USER: ${WP_USER}
+      WP_ADMIN_USER: ${WP_ADMIN_USER}
+      WP_USER_PASSWORD_FILE: /run/secrets/wp_user_password
+      WP_ADMIN_PASSWORD_FILE: /run/secrets/wp_admin_password
+    restart: always
+    networks:
+      - inception
+    volumes:
+      - wordpress_data:/var/www/html
+    depends_on:
+      - mariadb
+    secrets:
+      - wp_user_password
+      - wp_admin_password
 
 networks:
   inception:
@@ -47,21 +70,25 @@ volumes:
       device: /home/${LOGIN_NAME}/data/mariadb #CAMBIAR en .env en la VM!!!
       o: bind
 
-  # wordpress_data:
-  #   driver: local
-  #   driver_opts:
-  #     type: none
-  #     device: /home/mvidal/data/wordpress
-  #     o: bind
+  wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/${LOGIN_NAME}/data/wordpress
+      o: bind
 
 secrets:
   nginx_crt:
     file: ../${NGINX_CERT_FILE}
   nginx_key:
     file: ../${NGINX_KEY_FILE}
-  wp_root_password:
+  wpdb_root_password:
     file: ../secrets/db_root_password.txt
-  wp_user_password:
+  wpdb_user_password:
     file: ../secrets/db_password.txt
   mdb_root_password:
     file: ../secrets/mariadb_root_password.txt
+  wp_user_password:
+    file: ../secrets/wp_user_password.txt
+  wp_admin_password:
+    file: ../secrets/wp_admin_password.txt
