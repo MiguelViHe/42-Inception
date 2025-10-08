@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/18 16:32:57 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/07 17:54:01 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/08 12:35:46 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,25 +31,25 @@ setup:
 # -d: detached (en segundo plano). No deja la terminal pillada mostrando sus logs.
 # --build: fuerza la reconstrucción de las imágenes (aunque no haya cambios)
 up:	setup
-	docker compose -f srcs/docker-compose.yml up -d --build
+	@docker compose -f srcs/docker-compose.yml up -d --build
 
 # down: para y elimina los contenedores, redes y opcionalmente, volúmenes creados por 'up'
 # --remove-orphans: elimina contenedores que ya no están en el docker-compose.yml
 down:
-	docker compose -f srcs/docker-compose.yml down --remove-orphans
+	@docker compose -f srcs/docker-compose.yml down --remove-orphans
 
 # logs: muestra los logs de los contenedores
 # -f: sigue mostrando los logs en tiempo real (como tail -f)
 logs:
-	docker compose -f srcs/docker-compose.yml logs -f
+	@docker compose -f srcs/docker-compose.yml logs -f
 
 re: down up
 
 # Elimina contenedores, redes e imágenes creadas por 'up'
 # -f en image prune: no pide confirmación. Elimina todas las imágenes "dangling"
 clean:
-	docker compose -f srcs/docker-compose.yml down --remove-orphans
-	docker image prune -f
+	@docker compose -f srcs/docker-compose.yml down --remove-orphans
+	@docker image prune -f
 
 # Elimina contenedores, redes, imágenes y volúmenes creados por 'up'
 # --volumes: elimina los volúmenes asociados a los contenedores
@@ -59,13 +59,13 @@ clean:
 # sudo rm -rf /home/mvidal-h/data/: elimina los datos persistentes en el host
 fclean:
 	@echo "🧹 Deteniendo y eliminando contenedores y volúmenes del proyecto..."
-	docker compose -f srcs/docker-compose.yml down --volumes --remove-orphans
+	@docker compose -f srcs/docker-compose.yml down --volumes --remove-orphans
 	@echo "🧹 Limpiando contenedores detenidos..."
-	docker container prune -f
+	@docker container prune -f
 	@echo "🧹 Limpiando imágenes no usadas..."
-	docker image prune -af
+	@docker image prune -af
 	@echo "🧹 Limpiando volúmenes no usados..."
-	docker volume prune -f
+	@docker volume prune -f
 	@if [ -d "$(DATA_DIR)" ]; then \
 		echo "🗑 Borrando datos persistentes en $(DATA_DIR)..."; \
 		sudo rm -rf "$(DATA_DIR)"; \
@@ -77,20 +77,26 @@ fclean:
 
 volumes:
 	@docker volume ls
-	@docker volume inspect srcs_mariadb_data
-	@docker volume inspect srcs_wordpress_data
+	@for vol in $(shell docker volume ls -q); do \
+		echo "🔍 $$vol:"; \
+		docker volume inspect $$vol; \
+	done
 
 status:
 	@echo "🟦 Docker containers:"
 	@docker ps -a --filter name=nginx --filter name=wordpress --filter name=mariadb
 
-	@echo "\n🟩 Docker volumes:"
+	@echo "🟩 Docker volumes:"
 	@docker volume ls | grep -E 'srcs_mariadb_data|srcs_wordpress_data' || echo "No volumes found"
 
-	@echo "\n🟨 Docker volume paths:"
+	@echo "🟨 Docker volume paths:"
 	@echo "MariaDB:    $(DATA_DIR)/mariadb"
 	@echo "WordPress:  $(DATA_DIR)/wordpress"
-	@sudo ls -l $(DATA_DIR)
+	@if [ -d "$(DATA_DIR)" ]; then \
+		sudo ls -l $(DATA_DIR); \
+	else \
+		echo "🔴 No se puede listar $(DATA_DIR). Directorio inexistente."; \
+	fi
 
-	@echo "\n🟪 Docker network:"
+	@echo "🟪 Docker network:"
 	@docker network ls | grep inception || echo "No network found"

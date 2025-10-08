@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/12 15:12:29 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/07 17:42:08 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/08 12:27:26 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,9 @@ COPY conf/my.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 # Copio script de entrypoint que se encargara de...
 COPY tools/mariadb_entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/mariadb_entrypoint.sh
+
+# Sólo informativa (el contenedor de mariadb escucha en el puerto 3306)
+EXPOSE 3306
 
 # Defino entrypoint y comando principal
 ENTRYPOINT ["/usr/local/bin/mariadb_entrypoint.sh"]

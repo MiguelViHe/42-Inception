@@ -19,19 +19,21 @@ services:
     image: mariadb:1.0
     build: ./requeriments/mariadb
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_ROOT_USER: ${DB_ROOT}
-      MYSQL_PASSWORD_FILE: /run/secrets/mariadb_user_password
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mariadb_root_password
+      WP_DATABASE: ${DB_DATABASE}
+      WP_USER: ${WP_USER}
+      WP_ROOT_USER: ${WP_ROOT_USER}
+      WP_USER_PASSWORD_FILE: /run/secrets/wp_user_password
+      WP_ROOT_PASSWORD_FILE: /run/secrets/wp_root_password
+      MDB_ROOT_PASSWORD_FILE: /run/secrets/mdb_root_password
     restart: always
     networks:
       - inception
     volumes:
       - mariadb_data:/var/lib/mysql
     secrets:
-      - mariadb_root_password
-      - mariadb_user_password
+      - wp_root_password
+      - wp_user_password
+      - mdb_root_password
 
 networks:
   inception:
@@ -57,7 +59,9 @@ secrets:
     file: ../${NGINX_CERT_FILE}
   nginx_key:
     file: ../${NGINX_KEY_FILE}
-  mariadb_root_password:
+  wp_root_password:
     file: ../secrets/db_root_password.txt
-  mariadb_user_password:
+  wp_user_password:
     file: ../secrets/db_password.txt
+  mdb_root_password:
+    file: ../secrets/mariadb_root_password.txt

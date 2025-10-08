@@ -46,12 +46,13 @@ until mysqladmin ping --silent; do
 	sleep 1
 done
 
-DB_NAME=${MYSQL_DATABASE}
-DB_USER=${MYSQL_USER}
-DB_ROOT=${MYSQL_ROOT_USER}
+DB_NAME=${WP_DATABASE}
+DB_USER=${WP_USER}
+DB_ROOT=${WP_ROOT_USER}
 
-DB_USER_PASS=$(cat "${MYSQL_PASSWORD_FILE}")
-DB_ROOT_PASS=$(cat "${MYSQL_ROOT_PASSWORD_FILE}")
+DB_USER_PASS=$(cat "${WP_USER_PASSWORD_FILE}")
+DB_ROOT_PASS=$(cat "${WP_ROOT_PASSWORD_FILE}")
+MDB_ROOT_PASS=$(cat "${MDB_ROOT_PASSWORD_FILE}")
 
 echo "[+] Creando base de datos y usuarios..."
 
@@ -59,23 +60,21 @@ echo "[+] Creando base de datos y usuarios..."
 # Uso comillas invertidas (`) para el nombre de la base de datos en caso de
 # que contenga caracteres especiales o sea una palabra reservada.
 # Uso comillas simples (') para los nombres de usuario y contraseñas.
-# GRANT ALL PRIVILEGES ON *.* TO 'user'@'%' WITH GRANT OPTION;
-# 	*.* -> todos los privilegios en todas las bases de datos y tablas
 # 	'%' -> permite conexiones desde cualquier host
-# 	WITH GRANT OPTION -> permite al usuario otorgar sus privilegios a otros usuarios
 # FLUSH PRIVILEGES; -> recarga los privilegios para que los cambios tengan efecto
 # <<-EOSQL ... EOSQL -> permite ejecutar múltiples comandos SQL en un solo bloque (HEREDOC).
 mysql -u root <<-EOSQL
     CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;
     CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_USER_PASS}';
+    GRANT SELECT, INSERT, UPDATE, DELETE ON \`${DB_NAME}\`.* TO '${DB_USER}'@'%';
     CREATE USER IF NOT EXISTS '${DB_ROOT}'@'%' IDENTIFIED BY '${DB_ROOT_PASS}';
-    GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_USER}'@'%';
-    GRANT ALL PRIVILEGES ON *.* TO '${DB_ROOT}'@'%' WITH GRANT OPTION;
+    GRANT ALL PRIVILEGES ON \`${DB_NAME}\`.* TO '${DB_ROOT}'@'%';
+    ALTER USER 'root'@'localhost' IDENTIFIED BY '${MDB_ROOT_PASS}';
     FLUSH PRIVILEGES;
 EOSQL
 
 echo "[+] Deteniendo servidor temporal..."
-mysqladmin -uroot -p"${DB_ROOT_PASS}" shutdown
+mysqladmin -uroot -p"${MDB_ROOT_PASS}" shutdown
 
 echo "[+] Arrancando MariaDB normalmente..."
 exec mysqld_safe
