@@ -33,7 +33,7 @@ server {
 	# Dónde encontrar los archivos web
 	root /var/www/html;
 	# Si no se especifica un archivo, usar index.html
-	index index.html;
+	index index.php index.html, index.htm;
 
 	# location /: Cualquier peticion a la raiz del sitio web...
 	#	try_files: prueba $uri (la URI solicitada), $uri/ (la URI con una barra al final, para directorios)
@@ -67,11 +67,20 @@ server {
 		add_header Content-Type text/plain;
 	}
 
-	# Pasar las peticiones a archivos PHP al backend de PHP-FPM CUANDO ME PONGA CON WORDPRESS
+	# ¡Más antiguo. necesita definir la variable SCRIPT_FILENAME (última linea de este bloque)
+	# fastcgi.conf ya tiene todas las variables de fastcgi_params y además define SCRIPT_FILENAME!
+	# Pasar las peticiones a archivos PHP al backend de PHP-FPM
 	# location ~ \.php$ {
 	# 	include fastcgi_params;
-	# 	fastcgi_pass php-fpm:9000;
+	# 	fastcgi_pass wordpress:9000;
 	# 	fastcgi_index index.php;
 	# 	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 	# }
+
+	Pasar las peticiones a archivos PHP al backend de PHP-FPM
+	location ~ \.php$ {
+		include fastcgi.conf;
+		fastcgi_pass wordpress:9000;
+		fastcgi_index index.php;
+	}
 }

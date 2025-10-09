@@ -21,7 +21,7 @@ services:
     image: mariadb:1.0
     build: ./requeriments/mariadb
     environment:
-      WP_DATABASE: ${DB_DATABASE}
+      WP_DATABASE: ${DB_NAME}
       WPDB_USER: ${WPDB_USER}
       WPDB_ROOT_USER: ${WPDB_ROOT_USER}
       WPDB_USER_PASSWORD_FILE: /run/secrets/wpdb_user_password
@@ -41,10 +41,10 @@ services:
     container_name: wordpress
     image: wordpress:1.0
     build: ./requeriments/wordpress
+    env_file:
+      - .env
     environment:
-      WP_DATABASE: ${DB_DATABASE}
-      WP_USER: ${WP_USER}
-      WP_ADMIN_USER: ${WP_ADMIN_USER}
+      WPDB_USER_PASSWORD_FILE: /run/secrets/wpdb_user_password
       WP_USER_PASSWORD_FILE: /run/secrets/wp_user_password
       WP_ADMIN_PASSWORD_FILE: /run/secrets/wp_admin_password
     restart: always

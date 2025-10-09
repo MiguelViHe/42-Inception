@@ -41,7 +41,7 @@ mysqld_safe --skip-networking &
 pid="$!"
 
 # esperar a que MariaDB esté listo
-until mysqladmin ping --silent; do
+until mysqladmin ping ; do
 	echo "Esperando a que MariaDB esté disponible..."
 	sleep 1
 done
