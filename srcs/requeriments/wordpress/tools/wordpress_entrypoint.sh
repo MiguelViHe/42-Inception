@@ -3,12 +3,12 @@ set -e  # Salir inmediatamente si cualquier comando falla
 
 # --- Variables de entorno ---
 WPDB_USER_PASS=$(cat "${WPDB_USER_PASSWORD_FILE}")
-WB_USER_PASS=$(cat "${WP_USER_PASSWORD_FILE}")
+WP_USER_PASS=$(cat "${WP_USER_PASSWORD_FILE}")
 WP_ADMIN_PASS=$(cat "${WP_ADMIN_PASSWORD_FILE}")
 
 wait_for_db() {
-	
-	until mysqladmin ping -h "$DB_HOSTNAME" -u "$WPDB_USER" -p "$WPDB_USER_PASS"--silent; do
+
+	until mysqladmin ping -h "$DB_HOSTNAME" -u "$WPDB_USER" -p "$WPDB_USER_PASS" --silent; do
 		echo "Esperando a que MariaDB esté disponible..."
 		sleep 1
 	done
@@ -52,7 +52,7 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
 	if [ ! -z "$WP_USER" ]; then
 		echo "[+] Creando usuario secundario..."
 		wp user create "$WP_USER" "$WP_USER_EMAIL" \
-			--user_pass="$WB_USER_PASS" \
+			--user_pass="$WP_USER_PASS" \
 			--role=subscriber \
 			--allow-root
 	fi

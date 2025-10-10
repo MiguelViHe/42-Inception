@@ -77,7 +77,7 @@ server {
 	# 	fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 	# }
 
-	Pasar las peticiones a archivos PHP al backend de PHP-FPM
+	# Pasar las peticiones a archivos PHP al backend de PHP-FPM
 	location ~ \.php$ {
 		include fastcgi.conf;
 		fastcgi_pass wordpress:9000;

@@ -12,6 +12,7 @@ set -e # hace que el script termine si cualquier comando devuelve un error
 # 	mysql:mysql -> propietario y grupo
 mkdir -p /var/lib/mysql /run/mysqld && \
 chown -R mysql:mysql /var/lib/mysql /run/mysqld
+chmod 755 /var/lib/mysql /run/mysqld
 
 #verificación de si la base de datos ya ha sido inicializada
 # Si no existe el directorio /var/lib/mysql/mysql, significa que la base de datos
@@ -25,8 +26,9 @@ chown -R mysql:mysql /var/lib/mysql /run/mysqld
 # --user=mysql -> ejecuta el comando como el usuario mysql
 # --datadir=/var/lib/mysql -> especifica el directorio donde se almacenan los datos
 if [ ! -d "/var/lib/mysql/mysql" ]; then
-	echo "[+] Base de datos no encontrada, inicializando..."
-	mysqld --initialize-insecure --user=mysql --datadir=/var/lib/mysql
+    echo "[+] Base de datos no encontrada, inicializando..."
+    mysql_install_db --user=mysql --datadir=/var/lib/mysql --auth-root-authentication-method=normal
+    echo "[+] Base de datos MariaDB inicializada."
 else
 	echo "[+] Base de datos ya inicializada, saltando inicialización."
 fi
@@ -35,14 +37,12 @@ fi
 # mysqld_safe -> script que arranca mysqld y lo mantiene en ejecución segura
 # --skip-networking -> deshabilita las conexiones de red, solo permite conexiones locales
 # & -> ejecuta el comando en segundo plano para que el script continúe.
-# pid="$!" -> guarda el PID del proceso temporal, para poder detenerlo más tarde.
 echo "[+] Arrancando servidor temporal..."
-mysqld_safe --skip-networking &
-pid="$!"
+mysqld &
 
 # esperar a que MariaDB esté listo
 until mysqladmin ping ; do
-	echo "Esperando a que MariaDB esté disponible..."
+	echo "Esperando a que MariaDB esté disponibleeeeeee..."
 	sleep 1
 done
 
@@ -77,4 +77,4 @@ echo "[+] Deteniendo servidor temporal..."
 mysqladmin -uroot -p"${MDB_ROOT_PASS}" shutdown
 
 echo "[+] Arrancando MariaDB normalmente..."
-exec mysqld_safe
+exec mysqld

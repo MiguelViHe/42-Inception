@@ -12,6 +12,8 @@ services:
       - inception
     volumes:
       - wordpress_data:/var/www/html
+    depends_on:
+      - wordpress
     secrets:
       - nginx_crt
       - nginx_key
@@ -27,6 +29,7 @@ services:
       WPDB_USER_PASSWORD_FILE: /run/secrets/wpdb_user_password
       WPDB_ROOT_PASSWORD_FILE: /run/secrets/wpdb_root_password
       MDB_ROOT_PASSWORD_FILE: /run/secrets/mdb_root_password
+      MARIADB_LOG_CONSOLE: true # Para que los logs se vean en docker logs
     restart: always
     networks:
       - inception
@@ -55,6 +58,7 @@ services:
     depends_on:
       - mariadb
     secrets:
+      - wpdb_user_password
       - wp_user_password
       - wp_admin_password
 
