@@ -3,12 +3,13 @@ set -e  # Salir inmediatamente si cualquier comando falla
 
 # --- Variables de entorno ---
 WPDB_USER_PASS=$(cat "${WPDB_USER_PASSWORD_FILE}")
+WPDB_ROOT_PASS=$(cat "${WPDB_ROOT_PASSWORD_FILE}")
 WP_USER_PASS=$(cat "${WP_USER_PASSWORD_FILE}")
 WP_ADMIN_PASS=$(cat "${WP_ADMIN_PASSWORD_FILE}")
 
 wait_for_db() {
-
-	until mysqladmin ping -h "$DB_HOSTNAME" -u "$WPDB_USER" -p "$WPDB_USER_PASS" --silent; do
+	# Para el chequeo nos vale con el usuario más básico
+	until mysqladmin ping -h "$DB_HOSTNAME" -u "$WPDB_USER" -p"$WPDB_USER_PASS" --silent; do
 		echo "Esperando a que MariaDB esté disponible..."
 		sleep 1
 	done
@@ -30,11 +31,12 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
 	echo "[+] Descargando WordPress..."
 	wp core download --allow-root
 
+	# Pero para crear la base de datos de wordpress necesitamos el usuario root
 	echo "[+] Creando wp-config.php..."
 	wp config create \
 		--dbname="$DB_NAME" \
-		--dbuser="$WPDB_USER" \
-		--dbpass="$WPDB_USER_PASS" \
+		--dbuser="$WPDB_ROOT_USER" \
+		--dbpass="$WPDB_ROOT_PASS" \
 		--dbhost="$DB_HOSTNAME" \
 		--allow-root
 
@@ -59,10 +61,10 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
 
 	# --- Arrancar PHP-FPM en primer plano ---
 	echo "[+] Arrancando PHP-FPM..."
-	exec php-fpm8.2 -F
+	exec php-fpm7.4 -F
 fi
 echo "[+] WordPress ya instalado. Saltando configuración inicial."
-exec php-fpm8.2 -F  # Arranca PHP-FPM en primer plano
+exec php-fpm7.4 -F  # Arranca PHP-FPM en primer plano
 
 
 

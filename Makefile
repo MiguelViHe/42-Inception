@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/18 16:32:57 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/10 12:52:10 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/13 17:21:00 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,11 +32,18 @@ setup:
 # --build: fuerza la reconstrucción de las imágenes (aunque no haya cambios)
 up:	setup
 	@docker compose -f srcs/docker-compose.yml up -d --build
-
+# 	@docker compose -f srcs/docker-compose.yml build --no-cache
+# 	@docker compose -f srcs/docker-compose.yml up -d
 # down: para y elimina los contenedores, redes y opcionalmente, volúmenes creados por 'up'
 # --remove-orphans: elimina contenedores que ya no están en el docker-compose.yml
 down:
 	@docker compose -f srcs/docker-compose.yml down --remove-orphans
+
+# Reconstruye las imágenes y reinicia los contenedores sin usar caché
+deepre: fclean setup
+	@echo "Reiniciando sin caché..."
+	@docker compose -f srcs/docker-compose.yml build --no-cache
+	@docker compose -f srcs/docker-compose.yml up -d
 
 # logs: muestra los logs de los contenedores
 # -f: sigue mostrando los logs en tiempo real (como tail -f)

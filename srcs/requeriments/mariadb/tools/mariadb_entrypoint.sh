@@ -21,10 +21,12 @@ chmod 755 /var/lib/mysql /run/mysqld
 # por lo que no hacemos nada.
 # Esto evita que se sobrescriban los datos cada vez que se reinicia el contenedor
 # o se monta un volumen con datos ya existentes.
-# mysqld --initialize-insecure -> inicializa la base de datos sin contraseña para root.
-# No es peligroso porque la vamos a definir nosotros mismos desde secrets a continuación.
+# mysql_install_db -> comando que inicializa la base de datos MariaDB
 # --user=mysql -> ejecuta el comando como el usuario mysql
 # --datadir=/var/lib/mysql -> especifica el directorio donde se almacenan los datos
+# --auth-root-authentication-method=normal -> establece el método de autenticación
+# 	para el usuario root como "normal", lo que permite usar una contraseña en lugar
+# 	de métodos más seguros como socket o PAM.
 if [ ! -d "/var/lib/mysql/mysql" ]; then
     echo "[+] Base de datos no encontrada, inicializando..."
     mysql_install_db --user=mysql --datadir=/var/lib/mysql --auth-root-authentication-method=normal

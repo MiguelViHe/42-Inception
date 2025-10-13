@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/12 15:12:29 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/10 10:41:38 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/13 12:22:01 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,9 +55,9 @@ RUN wget -q https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 	&& chmod +x /usr/local/bin/wp
 
 # Crear directorio de WordPress y ajustar permisos
-RUN mkdir -p /var/www/html && \
-	chown -R www-data:www-data /var/www/html && \
-	chmod -R 755 /var/www/html
+RUN mkdir -p /var/www/html /run/php && \
+	chown -R www-data:www-data /var/www/html /run/php && \
+	chmod -R 755 /var/www/html 
 
 # Copiar archivos de configuración personalizados (opcional)
 # php.ini -> configuración general de PHP. (personalización de límites)

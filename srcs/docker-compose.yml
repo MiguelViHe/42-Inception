@@ -48,6 +48,7 @@ services:
       - .env
     environment:
       WPDB_USER_PASSWORD_FILE: /run/secrets/wpdb_user_password
+      WPDB_ROOT_PASSWORD_FILE: /run/secrets/wpdb_root_password
       WP_USER_PASSWORD_FILE: /run/secrets/wp_user_password
       WP_ADMIN_PASSWORD_FILE: /run/secrets/wp_admin_password
     restart: always
@@ -59,6 +60,7 @@ services:
       - mariadb
     secrets:
       - wpdb_user_password
+      - wpdb_root_password
       - wp_user_password
       - wp_admin_password
 
