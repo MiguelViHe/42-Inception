@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/18 16:32:57 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/13 17:21:00 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/13 18:51:02 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ setup:
 	sudo chmod 750 ${DATA_DIR}/mariadb
 
 	sudo mkdir -p ${DATA_DIR}/wordpress
-	sudo chown -R 101:101 ${DATA_DIR}/wordpress
+	sudo chown -R 33:33 ${DATA_DIR}/wordpress
 	sudo chmod 750 ${DATA_DIR}/wordpress
 
 # -f: especifica el archivo de configuración (no el por defecto)

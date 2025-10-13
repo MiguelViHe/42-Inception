@@ -63,7 +63,7 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
 	echo "[+] Arrancando PHP-FPM..."
 	exec php-fpm7.4 -F
 fi
-echo "[+] WordPress ya instalado. Saltando configuración inicial."
+echo "[+] WordPress ya instalado. Saltando instalación..."
 exec php-fpm7.4 -F  # Arranca PHP-FPM en primer plano
 
 
