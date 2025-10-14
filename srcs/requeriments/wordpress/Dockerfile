@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/12 15:12:29 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/14 11:21:09 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/14 16:33:33 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,7 @@ RUN apt-get update -y && \
 	php7.4-xml \
 	php7.4-zip \
 	ca-certificates \
-	wget unzip mariadb-client && \
+	wget unzip mariadb-client redis-tools && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
 

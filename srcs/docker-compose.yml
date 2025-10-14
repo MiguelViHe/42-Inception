@@ -1,11 +1,11 @@
 services:
   nginx:
     container_name: nginx
-    image: nginx:1.0
     build: ./requeriments/nginx
+    image: nginx:mvidal-h1.0
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME}
-    restart: always
+    restart: unless-stopped
     ports:
       - "$NGINX_PORT:443"
     networks:
@@ -20,8 +20,8 @@ services:
 
   mariadb:
     container_name: mariadb
-    image: mariadb:1.0
     build: ./requeriments/mariadb
+    image: mariadb:mvidal-h1.0
     environment:
       WP_DATABASE: ${DB_NAME}
       WPDB_USER: ${WPDB_USER}
@@ -30,7 +30,7 @@ services:
       WPDB_ROOT_PASSWORD_FILE: /run/secrets/wpdb_root_password
       MDB_ROOT_PASSWORD_FILE: /run/secrets/mdb_root_password
       MARIADB_LOG_CONSOLE: true # Para que los logs se vean en docker logs
-    restart: always
+    restart: unless-stopped
     networks:
       - inception
     volumes:
@@ -42,7 +42,7 @@ services:
 
   wordpress:
     container_name: wordpress
-    image: wordpress:1.0
+    image: wordpress:mvidal-h1.0
     build: ./requeriments/wordpress
     env_file:
       - .env
@@ -51,18 +51,29 @@ services:
       WPDB_ROOT_PASSWORD_FILE: /run/secrets/wpdb_root_password
       WP_USER_PASSWORD_FILE: /run/secrets/wp_user_password
       WP_ADMIN_PASSWORD_FILE: /run/secrets/wp_admin_password
-    restart: always
+    restart: unless-stopped
     networks:
       - inception
     volumes:
       - wordpress_data:/var/www/html
     depends_on:
       - mariadb
+      - redis # Nuevo servicio de Redis en Bonus
     secrets:
       - wpdb_user_password
       - wpdb_root_password
       - wp_user_password
       - wp_admin_password
+
+  redis:
+    container_name: redis
+    build: ./requeriments/bonus/redis
+    image: redis:mvidal-h1.0
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - inception
 
 networks:
   inception:
@@ -81,6 +92,13 @@ volumes:
     driver_opts:
       type: none
       device: /home/${LOGIN_NAME}/data/wordpress
+      o: bind
+
+  redis_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/${LOGIN_NAME}/data/redis
       o: bind
 
 secrets:

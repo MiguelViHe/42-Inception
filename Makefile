@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/18 16:32:57 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/13 18:51:02 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/14 13:21:15 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,10 @@ setup:
 	sudo mkdir -p ${DATA_DIR}/wordpress
 	sudo chown -R 33:33 ${DATA_DIR}/wordpress
 	sudo chmod 750 ${DATA_DIR}/wordpress
+
+	sudo mkdir -p ${DATA_DIR}/redis
+	sudo chown -R 101:101 ${DATA_DIR}/redis
+	sudo chmod 750 ${DATA_DIR}/redis
 
 # -f: especifica el archivo de configuración (no el por defecto)
 # up: crea y arranca los contenedores
@@ -91,14 +95,15 @@ volumes:
 
 status:
 	@echo "🟦 Docker containers:"
-	@docker ps -a --filter name=nginx --filter name=wordpress --filter name=mariadb
+	@docker ps -a --filter name=nginx --filter name=wordpress --filter name=mariadb --filter name=redis
 
 	@echo "🟩 Docker volumes:"
-	@docker volume ls | grep -E 'srcs_mariadb_data|srcs_wordpress_data' || echo "No volumes found"
+	@docker volume ls | grep -E 'srcs_mariadb_data|srcs_wordpress_data|srcs_redis_data' || echo "No volumes found"
 
 	@echo "🟨 Docker volume paths:"
 	@echo "MariaDB:    $(DATA_DIR)/mariadb"
 	@echo "WordPress:  $(DATA_DIR)/wordpress"
+	@echo "Redis:     $(DATA_DIR)/redis"
 	@if [ -d "$(DATA_DIR)" ]; then \
 		sudo ls -l $(DATA_DIR); \
 	else \

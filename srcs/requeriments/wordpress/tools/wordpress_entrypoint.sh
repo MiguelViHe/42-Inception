@@ -16,6 +16,37 @@ wait_for_db() {
 	echo "[+] Base de datos disponible."
 }
 
+wait_for_redis() {
+	# Esperar a que Redis esté listo
+	until redis-cli -h redis -p 6379 ping | grep -q PONG; do
+		echo "Esperando a que Redis esté disponible..."
+		sleep 1
+	done
+	echo "[+] Redis disponible."
+}
+
+install_and_config_redis() {
+	# --- Esperar a que Redis esté listo ---
+	wait_for_redis
+
+	# --- Instalar y activar Redis Object Cache ---
+	if  ! wp plugin is-installed redis-cache --allow-root ; then
+		echo "[+] WP: Instalando Redis Object Cache..."
+		wp plugin install redis-cache --activate --allow-root
+	fi
+
+	# --- Configurar Redis en wp-config.php ---
+	echo "[+] WP: Configurando Redis en wp-config.php..."
+	wp config set WP_REDIS_HOST redis --allow-root
+	wp config set WP_CACHE true --allow-root
+
+	# --- Activar la caché de objetos ---
+	echo "[+] WP: Activando Redis Object Cache..."
+	wp redis enable --allow-root
+	# chown -R www-data:www-data "$WP_DIR/wp-content"
+	# chmod -R 755 "$WP_DIR/wp-content"
+}
+
 # --- Comprobar si WordPress ya está instalado ---
 if [ ! -f "$WP_DIR/wp-config.php" ]; then
 	# --- Preparar directorio ---
@@ -58,6 +89,9 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
 			--role=subscriber \
 			--allow-root
 	fi
+
+	# --- Instalar y configurar Redis Object Cache ---
+	install_and_config_redis
 
 	# --- Arrancar PHP-FPM en primer plano ---
 	echo "[+] Arrancando PHP-FPM..."
