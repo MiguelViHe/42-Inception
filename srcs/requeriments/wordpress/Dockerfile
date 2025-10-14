@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/12 15:12:29 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/13 12:22:01 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/14 11:21:09 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ FROM debian:bullseye
 #	wget -> Descarga archivos desde Internet (wget https://wordpress.org/latest.tar.gz).
 #	unzip -> Descomprime el archivo ZIP, por ejemplo el paquete de instalacion de wordpress.
 #	mariadb-client -> Permite probar conexión a la base de datos desde el contenedor.
-RUN apt-get update && \
+RUN apt-get update -y && \
 	apt-get install -y --no-install-recommends \
 	php7.4-fpm \
 	php7.4-cli \

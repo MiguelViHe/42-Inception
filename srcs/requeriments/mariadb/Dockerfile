@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/12 15:12:29 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/09 10:12:08 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/14 11:20:57 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ FROM debian:bullseye
 # -y -> responde "si" a todas las preguntas que haga apt-get
 # --no-install-recommends -> instala solo lo necesario, sin paquetes adicionales 
 # de configuración.
-RUN apt-get update && \
+RUN apt-get update -y && \
 	apt-get install -y --no-install-recommends mariadb-server && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*

@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/12 15:12:29 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/08 17:48:41 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/14 11:21:20 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ FROM debian:bullseye
 # gettext-base -> para usar envsubst y sustituir variables en los archivos 
 # de configuración.
 # curl -> para el healthcheck
-RUN apt-get update && \
+RUN apt-get update -y && \
 	apt-get install -y --no-install-recommends nginx openssl gettext-base curl && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
