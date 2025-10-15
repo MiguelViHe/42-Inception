@@ -42,8 +42,8 @@ services:
 
   wordpress:
     container_name: wordpress
-    image: wordpress:mvidal-h1.0
     build: ./requeriments/wordpress
+    image: wordpress:mvidal-h1.0
     env_file:
       - .env
     environment:
@@ -74,6 +74,24 @@ services:
       - redis_data:/data
     networks:
       - inception
+
+  ftp:
+    container_name: ftp
+    build: ./requeriments/bonus/ftp
+    image: ftp:mvidal-h1.0
+    environment:
+      FTP_USER: ${FTP_USER}
+      FTP_USER_PASSWORD_FILE: /run/secrets/ftp_user_password
+    restart: unless-stopped
+    volumes:
+      - wordpress_data:/home/${FTP_USER} # Directorio home del usuario FTP
+    networks:
+      - inception
+    ports:
+      - "21:21"
+      - "21000-21010:21000-21010"
+    secrets:
+      - ftp_user_password
 
 networks:
   inception:
@@ -116,3 +134,5 @@ secrets:
     file: ../secrets/wp_user_password.txt
   wp_admin_password:
     file: ../secrets/wp_admin_password.txt
+  ftp_user_password:
+    file: ../secrets/bonus_ftp_password.txt
