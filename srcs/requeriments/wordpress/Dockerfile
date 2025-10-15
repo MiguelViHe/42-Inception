@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/12 15:12:29 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/14 16:33:33 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/15 14:50:13 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,7 +54,8 @@ RUN apt-get update -y && \
 RUN wget -q https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp \
 	&& chmod +x /usr/local/bin/wp
 
-# Crear directorio de WordPress y ajustar permisos
+# Crear directorio de WordPress y ajustar permisos. útil sólo si no se monta volumen del host
+#Lo dejo para que la imagen valga tanto si se monta volumen como si no.
 RUN mkdir -p /var/www/html /run/php && \
 	chown -R www-data:www-data /var/www/html /run/php && \
 	chmod -R 755 /var/www/html 

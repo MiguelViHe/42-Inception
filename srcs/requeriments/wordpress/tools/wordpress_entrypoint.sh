@@ -43,16 +43,11 @@ install_and_config_redis() {
 	# --- Activar la caché de objetos ---
 	echo "[+] WP: Activando Redis Object Cache..."
 	wp redis enable --allow-root
-	# chown -R www-data:www-data "$WP_DIR/wp-content"
-	# chmod -R 755 "$WP_DIR/wp-content"
 }
 
 # --- Comprobar si WordPress ya está instalado ---
 if [ ! -f "$WP_DIR/wp-config.php" ]; then
 	# --- Preparar directorio ---
-	mkdir -p "$WP_DIR"
-	chown -R www-data:www-data "$WP_DIR"
-	chmod -R 755 "$WP_DIR"
 	cd "$WP_DIR"
 
 	# --- Esperar a que la base de datos esté lista ---
@@ -89,6 +84,10 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
 			--role=subscriber \
 			--allow-root
 	fi
+
+	# --- Ajustar permisos para directorios y archivos de la instalación de WordPress ---
+	chown -R www-data:www-data "$WP_DIR"
+	chmod -R 755 "$WP_DIR"
 
 	# --- Instalar y configurar Redis Object Cache ---
 	install_and_config_redis
