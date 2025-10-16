@@ -1,7 +1,7 @@
 services:
   nginx:
     container_name: nginx
-    build: ./requeriments/nginx
+    build: ./requirements/nginx
     image: nginx:mvidal-h1.0
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME}
@@ -20,7 +20,7 @@ services:
 
   mariadb:
     container_name: mariadb
-    build: ./requeriments/mariadb
+    build: ./requirements/mariadb
     image: mariadb:mvidal-h1.0
     environment:
       WP_DATABASE: ${DB_NAME}
@@ -42,7 +42,7 @@ services:
 
   wordpress:
     container_name: wordpress
-    build: ./requeriments/wordpress
+    build: ./requirements/wordpress
     image: wordpress:mvidal-h1.0
     env_file:
       - .env
@@ -67,7 +67,7 @@ services:
 
   redis:
     container_name: redis
-    build: ./requeriments/bonus/redis
+    build: ./requirements/bonus/redis
     image: redis:mvidal-h1.0
     restart: unless-stopped
     volumes:
@@ -77,19 +77,21 @@ services:
 
   ftp:
     container_name: ftp
-    build: ./requeriments/bonus/ftp
+    build: ./requirements/bonus/ftp
     image: ftp:mvidal-h1.0
     environment:
       FTP_USER: ${FTP_USER}
       FTP_USER_PASSWORD_FILE: /run/secrets/ftp_user_password
     restart: unless-stopped
     volumes:
-      - wordpress_data:/home/${FTP_USER} # Directorio home del usuario FTP
+      - wordpress_data:/home/${FTP_USER}/ftp # Directorio home del usuario FTP
     networks:
       - inception
     ports:
       - "21:21"
       - "21000-21010:21000-21010"
+    depends_on:
+      - wordpress
     secrets:
       - ftp_user_password
 

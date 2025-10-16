@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/14 11:25:13 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/15 17:34:35 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/16 16:36:14 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,16 +19,19 @@ RUN apt-get update -y && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
 
-# Crear usuario FTP con su directorio home y permisos adecuados
-# -m -> crea el directorio home si no existe
-# -d -> especifica el directorio home
-# -s -> shell de login (nologin para que no pueda ejecutar comandos, solo FTP)
-# echo ... | chpasswd -> establece la contraseña del usuario
-RUN useradd -m -d /home/${FTP_USER} -s /usr/sbin/nologin ${FTP_USER} && \
-	echo "${FTP_USER}:$(cat /run/secrets/ftp_user_password)" | chpasswd
-	
+# Crear el directorio necesario para vsftpd y ajustar permisos
+# /var/run/vsftpd/empty -> Lo usa para chrootear usuarios. chroot es una medida de seguridad
+# que limita a los usuarios a un directorio específico, impidiendo que accedan a otras
+# partes del sistema de archivos.
+RUN mkdir -p /var/run/vsftpd/empty && \
+chmod 755 /var/run/vsftpd/empty
+
 #copia del archivo de configuración personalizado
 COPY conf/vsftpd.conf /etc/vsftpd.conf
+
+# Copiar el script de entrada y dar permisos de ejecución
+COPY ./tools/ftp_entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/ftp_entrypoint.sh
 
 # Sólo informativa (el contenedor de vsftpd escucha en el puerto 21 y rango 21000-21010)
 EXPOSE 21 21000-21010
@@ -36,4 +39,4 @@ EXPOSE 21 21000-21010
 # Los corchetes indican que se ejecutaran en primer plano. Tanto con ENTRYPOINT
 # como con CMD, si no se usan corchetes, se ejecuta en segundo plano y el
 # contenedor se detiene inmediatamente.
-CMD ["/usr/sbin/vsftpd", "/etc/vsftpd.conf"]
+ENTRYPOINT ["/usr/local/bin/ftp_entrypoint.sh"]
