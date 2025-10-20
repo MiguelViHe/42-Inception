@@ -1,0 +1,9 @@
+secrets/
+
+# Ignorar logs y archivos temporales
+*.log
+tmp/
+
+# Ignorar archivos de Git
+.git
+.gitignore

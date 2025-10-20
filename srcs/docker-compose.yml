@@ -95,6 +95,16 @@ services:
     secrets:
       - ftp_user_password
 
+  static_website:
+    container_name: static_website
+    build: ./requirements/bonus/static_website
+    image: static_website:mvidal-h1.0
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    networks:
+      - inception
+
 networks:
   inception:
     driver: bridge
