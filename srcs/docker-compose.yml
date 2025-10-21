@@ -40,7 +40,7 @@ services:
       - wpdb_user_password
       - mdb_root_password
 
-  wordpress:
+  wordpress: # entrar con https://mvidal-h.42.fr:443
     container_name: wordpress
     build: ./requirements/wordpress
     image: wordpress:mvidal-h1.0
@@ -95,7 +95,7 @@ services:
     secrets:
       - ftp_user_password
 
-  static_website:
+  static_website: # entrar con http://mvidal-h:8080
     container_name: static_website
     build: ./requirements/bonus/static_website
     image: static_website:mvidal-h1.0
@@ -105,7 +105,7 @@ services:
     networks:
       - inception
 
-  adminer:
+  adminer: # entrar con http://localhost:8081
     container_name: adminer
     build: ./requirements/bonus/adminer
     image: adminer:mvidal-h1.0
