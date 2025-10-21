@@ -105,6 +105,18 @@ services:
     networks:
       - inception
 
+  adminer:
+    container_name: adminer
+    build: ./requirements/bonus/adminer
+    image: adminer:mvidal-h1.0
+    restart: unless-stopped
+    ports:
+      - "8081:80" #host:contenedor (80 por defecto en adminer)
+    networks:
+      - inception
+    depends_on:
+      - mariadb
+
 networks:
   inception:
     driver: bridge
