@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/18 16:32:57 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/21 12:54:07 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/21 17:49:09 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -96,7 +96,8 @@ volumes:
 status:
 	@echo "🟦 Docker containers:"
 	@docker ps -a --filter name=nginx --filter name=wordpress --filter name=mariadb --filter name=redis \
-		--filter name=ftp --filter name=static_website --filter name=adminer || echo "No containers found"
+		--filter name=ftp --filter name=static_website --filter name=adminer \
+		--filter name=cadvisor || echo "No containers found"
 
 	@echo "🟩 Docker volumes:"
 	@docker volume ls | grep -E 'srcs_mariadb_data|srcs_wordpress_data|srcs_redis_data' || echo "No volumes found"

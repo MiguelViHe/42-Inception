@@ -117,6 +117,19 @@ services:
     depends_on:
       - mariadb
 
+  cadvisor: # entrar con http://localhost:9090
+    container_name: cadvisor
+    build: ./requirements/bonus/cadvisor
+    image: cadvisor:mvidal-h1.0
+    restart: unless-stopped
+    ports: 
+      - "9090:8080" #host:contenedor
+    volumes:
+      - /:/rootfs:ro # Montar el sistema de archivos raíz en modo solo lectura (ro)
+      - /var/run:/var/run:ro # Montar el directorio de ejecución de Docker (ro)
+      - /sys:/sys:ro # información del kernel, como CPU, memoria, cgroups, etc.(ro)
+      - /var/lib/docker/:/var/lib/docker:ro # información de contenedores y almacenamiento Docker (ro)
+
 networks:
   inception:
     driver: bridge
