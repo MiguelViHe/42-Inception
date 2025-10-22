@@ -22,10 +22,11 @@ else
 	echo "${FTP_USER}:${FTP_USER_PASS}" | chpasswd
 	echo "[+] Usuario $FTP_USER creado con éxito."
 fi
-	chown ${FTP_USER}:${FTP_USER} /home/${FTP_USER}
-	chmod 755 /home/${FTP_USER}
 	mkdir -p /home/${FTP_USER}/ftp
-	chown -R ${FTP_USER}:${FTP_USER} /home/${FTP_USER}/ftp
-	chmod 755 /home/${FTP_USER}/ftp
+	chown nobody:nogroup /home/${FTP_USER}/ftp
+	chmod a-w /home/${FTP_USER}/ftp
+	mkdir -p /home/${FTP_USER}/ftp/files_ftp
+	chown -R ${FTP_USER}:${FTP_USER} /home/${FTP_USER}/ftp/files_ftp
+	chmod 755 /home/${FTP_USER}/ftp/files_ftp
 
 exec /usr/sbin/vsftpd /etc/vsftpd.conf

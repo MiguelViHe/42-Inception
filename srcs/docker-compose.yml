@@ -77,14 +77,14 @@ services:
 
   ftp:
     container_name: ftp
-    build: ./requirements/bonus/ftp
+    build: ./requirements/bonus/ftp/
     image: ftp:mvidal-h1.0
     environment:
       FTP_USER: ${FTP_USER}
       FTP_USER_PASSWORD_FILE: /run/secrets/ftp_user_password
     restart: unless-stopped
     volumes:
-      - wordpress_data:/home/${FTP_USER}/ftp # Directorio home del usuario FTP
+      - wordpress_data:/home/${FTP_USER}/ftp/files_ftp # Directorio home del usuario FTP
     networks:
       - inception
     ports:
@@ -92,6 +92,27 @@ services:
       - "21000-21010:21000-21010"
     depends_on:
       - wordpress
+    secrets:
+      - ftp_user_password
+
+  ftp2:
+    container_name: ftp2
+    build: ./requirements/bonus/ftp2/
+    image: ftp:42prueba
+    depends_on:
+      - wordpress
+    volumes:
+      - wordpress_data:/home/${FTP_USER}/ftp/files
+    environment:
+      FTP_USER: ${FTP_USER}
+      FTP_USER_PASSWORD_FILE: /run/secrets/ftp_user_password
+    ports:
+      - "2121:21"
+      - "20:20"
+      - "40000-40005:40000-40005"
+    networks:
+      - inception
+    restart: always
     secrets:
       - ftp_user_password
 
