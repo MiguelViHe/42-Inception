@@ -18,15 +18,31 @@ if id -u "$FTP_USER" >/dev/null 2>&1; then
 	echo "[+] El usuario $FTP_USER ya existe, saltando creación."
 else
 	echo "[+] Creando usuario FTP: $FTP_USER"
-	useradd -d /home/${FTP_USER} -s /usr/sbin/nologin ${FTP_USER} && \
+	useradd -m -d /home/${FTP_USER} -s /usr/sbin/nologin ${FTP_USER} && \
 	echo "${FTP_USER}:${FTP_USER_PASS}" | chpasswd
 	echo "[+] Usuario $FTP_USER creado con éxito."
 fi
-	mkdir -p /home/${FTP_USER}/ftp
-	chown nobody:nogroup /home/${FTP_USER}/ftp
-	chmod a-w /home/${FTP_USER}/ftp
-	mkdir -p /home/${FTP_USER}/ftp/files_ftp
-	chown -R ${FTP_USER}:${FTP_USER} /home/${FTP_USER}/ftp/files_ftp
-	chmod 755 /home/${FTP_USER}/ftp/files_ftp
+mkdir -p /home/${FTP_USER}/ftp
+chown nobody:nogroup /home/${FTP_USER}/ftp
+chmod a-w /home/${FTP_USER}/ftp
+mkdir -p /home/${FTP_USER}/ftp/files_ftp
+chown -R ${FTP_USER}:${FTP_USER} /home/${FTP_USER}/ftp/files_ftp
+chmod 755 /home/${FTP_USER}/ftp/files_ftp
+
+# Sed: busca coincidencias exactas
+# -i -> edita el archivo en el lugar
+# -r -> usa expresiones regulares extendidas
+# "s/patrón/reemplazo/flags" -> sustituye patrón por reemplazo
+# ejemplo concreto: 
+#	"s/#write_enable=YES/write_enable=YES/1"
+# En este caso concreo:
+# ^[[:space:]]* -> busca el inicio de línea seguido de cualquier espacio en blanco
+# auth[[:space:]]+ : busca la palabra "auth" seguida de uno o más espacios en blanco
+# required[[:space:]]+ : busca la palabra "required" seguida de uno o más espacios en blanco
+# pam_shells\.so : busca la palabra "pam_shells.so" (el punto se escapa con \ para que se interprete literalmente)
+# # & : el símbolo & representa toda la cadena coincidente, por lo que se antepone un # para comentarla línea
+# /etc/pam.d/vsftpd : archivo donde se realiza la sustitución
+# Esto deshabilita la verificación de shells válidos para el usuario FTP, permitiendo que inicie sesión incluso si su shell es nologin.
+sed -i -r "s/^[[:space:]]*auth[[:space:]]+required[[:space:]]+pam_shells\.so/# &/" /etc/pam.d/vsftpd
 
 exec /usr/sbin/vsftpd /etc/vsftpd.conf

@@ -95,27 +95,6 @@ services:
     secrets:
       - ftp_user_password
 
-  ftp2:
-    container_name: ftp2
-    build: ./requirements/bonus/ftp2/
-    image: ftp:42prueba
-    depends_on:
-      - wordpress
-    volumes:
-      - wordpress_data:/home/${FTP_USER}/ftp/files
-    environment:
-      FTP_USER: ${FTP_USER}
-      FTP_USER_PASSWORD_FILE: /run/secrets/ftp_user_password
-    ports:
-      - "2121:21"
-      - "20:20"
-      - "40000-40005:40000-40005"
-    networks:
-      - inception
-    restart: always
-    secrets:
-      - ftp_user_password
-
   static_website: # entrar con http://mvidal-h:8080
     container_name: static_website
     build: ./requirements/bonus/static_website
