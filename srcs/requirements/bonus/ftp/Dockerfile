@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/14 11:25:13 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/16 16:36:14 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/10/24 11:10:13 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ FROM debian:bullseye
 
 # Instalación de vsftpd. Es un servidor FTP ligero y seguro.
 RUN apt-get update -y && \
-	apt-get install -y --no-install-recommends vsftpd && \
+	apt-get install -y --no-install-recommends vsftpd gettext-base && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
 
@@ -27,7 +27,7 @@ RUN mkdir -p /var/run/vsftpd/empty && \
 chmod 755 /var/run/vsftpd/empty
 
 #copia del archivo de configuración personalizado
-COPY conf/vsftpd.conf /etc/vsftpd.conf
+COPY conf/vsftpd.conf.template /etc/vsftpd.conf.template
 
 # Copiar el script de entrada y dar permisos de ejecución
 COPY ./tools/ftp_entrypoint.sh /usr/local/bin/

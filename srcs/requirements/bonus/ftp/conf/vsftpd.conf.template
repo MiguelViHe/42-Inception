@@ -25,7 +25,7 @@ file_open_mode=0666 # Permisos para archivos subidos
 local_umask=002 # Permisos que se sustraen a los archivos creados (otros solo podran leer, los demás leer y escribir)
 
 # Encarcelar al usuario en su home (chroot)
-local_root=/home/ftpuser/ftp
+local_root=/home/${FTP_USER}/ftp
 chroot_local_user=YES
 allow_writeable_chroot=YES
 

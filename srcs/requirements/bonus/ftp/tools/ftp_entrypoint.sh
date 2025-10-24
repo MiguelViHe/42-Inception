@@ -5,6 +5,11 @@ set -e # hace que el script termine si cualquier comando devuelve un error
 FTP_USER=${FTP_USER:-"ftpuser"} # Usuario FTP, si no se define se usa por defecto "ftpuser"
 FTP_USER_PASS=$(cat ${FTP_USER_PASSWORD_FILE}) # Contraseña del usuario FTP, leída desde el archivo
 
+# Reemplaza variables de entorno en el archivo de configuración de vsftpd
+# y guarda el resultado en /etc/vsftpd.conf
+envsubst '${FTP_USER}' < /etc/vsftpd.conf.template > /etc/vsftpd.conf
+rm /etc/vsftpd.conf.template
+
 # Crear usuario FTP con su directorio home y permisos adecuados
 # -m -> crea el directorio home si no existe
 # -d -> especifica el directorio home
