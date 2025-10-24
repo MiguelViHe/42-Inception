@@ -75,7 +75,7 @@ services:
     networks:
       - inception
 
-  ftp:
+  ftp: # entrar con: ftp localhost 21 (desde la terminal)
     container_name: ftp
     build: ./requirements/bonus/ftp/
     image: ftp:mvidal-h1.0
