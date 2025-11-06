@@ -87,7 +87,7 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
 
 	# --- Ajustar permisos para directorios y archivos de la instalación de WordPress ---
 	chown -R www-data:www-data "$WP_DIR"
-	chmod -R 755 "$WP_DIR"
+	chmod -R 775 "$WP_DIR"
 
 	# --- Instalar y configurar Redis Object Cache ---
 	install_and_config_redis

@@ -31,7 +31,10 @@ mkdir -p /home/${FTP_USER}/ftp
 chown nobody:nogroup /home/${FTP_USER}/ftp
 chmod a-w /home/${FTP_USER}/ftp
 mkdir -p /home/${FTP_USER}/ftp/files_ftp
-chown -R ${FTP_USER}:${FTP_USER} /home/${FTP_USER}/ftp/files_ftp
+# chown -R ${FTP_USER}:${FTP_USER} /home/${FTP_USER}/ftp/files_ftp
+# Añadir ftpuser al grupo www-data para que pueda escribir donde WordPress escribe
+usermod -aG www-data ${FTP_USER}
+# Dar permisos de grupo de escritura a los archivos de WordPress compartidos
 chmod 755 /home/${FTP_USER}/ftp/files_ftp
 
 # Sed: busca coincidencias exactas

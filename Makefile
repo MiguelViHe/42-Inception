@@ -24,7 +24,7 @@ setup:
 
 	sudo mkdir -p ${DATA_DIR}/wordpress
 	sudo chown -R 33:33 ${DATA_DIR}/wordpress
-	sudo chmod 750 ${DATA_DIR}/wordpress
+	sudo chmod 770 ${DATA_DIR}/wordpress
 
 	sudo mkdir -p ${DATA_DIR}/redis
 	sudo chown -R 101:101 ${DATA_DIR}/redis
