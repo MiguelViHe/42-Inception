@@ -6,7 +6,7 @@
 #    By: mvidal-h <mvidal-h@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/18 16:32:57 by mvidal-h          #+#    #+#              #
-#    Updated: 2025/10/21 17:49:09 by mvidal-h         ###   ########.fr        #
+#    Updated: 2025/11/07 11:41:13 by mvidal-h         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ setup:
 
 	sudo mkdir -p ${DATA_DIR}/wordpress
 	sudo chown -R 33:33 ${DATA_DIR}/wordpress
-	sudo chmod 770 ${DATA_DIR}/wordpress
+	sudo chmod 750 ${DATA_DIR}/wordpress
 
 	sudo mkdir -p ${DATA_DIR}/redis
 	sudo chown -R 101:101 ${DATA_DIR}/redis

@@ -86,8 +86,10 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
 	fi
 
 	# --- Ajustar permisos para directorios y archivos de la instalación de WordPress ---
+	# En uploads permito escritura al grupo porque ahí es donde el FTP subirá archivos
 	chown -R www-data:www-data "$WP_DIR"
-	chmod -R 775 "$WP_DIR"
+	chmod -R 755 "$WP_DIR"
+	chmod -R 775 "$WP_DIR/wp-content/uploads"
 
 	# --- Instalar y configurar Redis Object Cache ---
 	install_and_config_redis
