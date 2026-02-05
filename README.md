@@ -89,9 +89,13 @@ git clone https://github.com/MiguelViHe/42-Inception.git
 cd 42-Inception
 ```
 
-🔹Configurar variables de entorno:
+```md
+⚠️ WARNING: hacer antes de hacer make:
 
-Edita .env con tus dominios, contraseñas y credenciales.
+❕ Edita .env con tus dominios y credenciales.
+
+❕ Copia tu carpeta secrets que contenga archivos .txt con las contraseñas de tus usuarios en la raíz del proyecto.
+```
 
 🔹Construir y arrancar todos los servicios:
 
