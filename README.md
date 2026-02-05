@@ -91,7 +91,7 @@ cd 42-Inception
 
 🔹Configurar variables de entorno:
 
-# Edita .env con tus dominios, contraseñas y credenciales.
+Edita .env con tus dominios, contraseñas y credenciales.
 
 🔹Construir y arrancar todos los servicios:
 
